@@ -1,0 +1,20 @@
+<div class="row">
+    <div class="col-md-3">
+        <alert ng-repeat="contact in xmppService.roster" class="no-bottom-margin" type="{{contact.status}}">
+            <span>
+                {{contact.name}} : {{contact.username}}
+                <button ng-click="open(contact)" class="btn btn-default btn-xs pull-right" ng-disabled="contact.status === 'disconnected'">
+                    <i class="fa fa-phone"></i>
+                </button>
+                <button ng-click="open(contact)" class="btn btn-default btn-xs pull-right" ng-disabled="contact.status === 'disconnected'">
+                    <i class="fa fa-video-camera"></i>
+                </button>
+            </span>
+        </alert>
+    </div>
+    <div class="col-md-9">
+        <video autoplay ng-repeat="stream in webrtc.getPeers">
+            <source ng-src="{{stream.stream}}">
+        </video>
+    </div>
+</div>
