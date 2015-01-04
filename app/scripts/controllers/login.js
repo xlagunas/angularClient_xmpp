@@ -15,12 +15,6 @@ angular.module('xmppTestApp')
         xmpp.auth(username, password);
     };
 
-    $scope.initRoster = function() {
-        var stream = webrtc.initStream(true, true);
-        console.log(stream);
-
-    };
-
     $scope.webrtc = webrtc;
 
 
@@ -34,6 +28,8 @@ angular.module('xmppTestApp')
             $state.go("landing");
         }
     }, true);
+
+
 
 
   });

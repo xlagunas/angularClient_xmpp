@@ -16,30 +16,28 @@ angular.module('xmppTestApp')
     $scope.dial = {role: role, status: 'pending'};
 
     $scope.ok = function () {
-
-        webrtc.initStream(true, true, function(stream){
+        //TODO set audio to true
+        webrtc.initStream(true, false, function(){
             $log.info("Stream is added and can be recovered");
             //If we are the callers, change layout and wait for answer from peer -disable ok button and set timeout callback'
             if ($scope.dial.role === "caller") {
-                $scope.dial.status = "calling";
-                promise = $timeout(timeoutCancelDismissPopup, 5000);
-                sendStatus("request");
+                $scope.$apply(function() {
+                    $scope.dial.status = "calling";
+                    promise = $timeout(timeoutCancelDismissPopup, 50000);
+                    sendStatus("request");
+                });
             }
             //if we are the callees, just send the response and do whatever initialization is needed to receive data,
             // such as start camera
             else if ($scope.dial.role === "callee") {
                 $scope.dial.status = "accepted";
                 $timeout.cancel(promise);
-                promise = $timeout(timeoutCancelRejectCall, 10000);
-                $modalInstance.dismiss('timeout');
+                promise = $timeout(timeoutCancelRejectCall, 50000);
+                $modalInstance.close(contact);
                 sendStatus("accepted");
             }
         });
     };
-
-//    $scope.ok = function () {
-//        $modalInstance.close($scope.selected.item);
-//    };
 
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
@@ -61,5 +59,10 @@ angular.module('xmppTestApp')
     function sendStatus(status){
         xmpp.send(contact.jid, JSON.stringify({type: status}));
     }
+
+     $scope.$on('resolution', function(event, data){
+         $log.info(data);
+         $modalInstance.close(contact);
+     });
 
   });

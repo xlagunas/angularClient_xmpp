@@ -23,8 +23,6 @@ angular.module('xmppTestApp')
         $scope.initRoster();
     }
 
-    $scope.items = ['item1', 'item2', 'item3'];
-
     $scope.open = function (contact, size) {
 
         var modalInstance = $modal.open({
@@ -44,6 +42,7 @@ angular.module('xmppTestApp')
 
         modalInstance.result.then(function (selectedItem) {
             $scope.selected = selectedItem;
+            webrtc.createConnection(selectedItem.jid, true);
         }, function () {
             $log.info('Modal dismissed at: ' + new Date());
         });
@@ -63,6 +62,11 @@ angular.module('xmppTestApp')
                         return "callee";
                     }
                 }
+            });
+
+            modalInstance.result.then(function(contact){
+                $log.debug("createing passive peer, waiting for answer");
+                webrtc.createConnection(contact.jid, false);
             });
         }
     }, true);

@@ -13,8 +13,7 @@
         </alert>
     </div>
     <div class="col-md-9">
-        <video autoplay ng-repeat="stream in webrtc.getPeers">
-            <source ng-src="{{stream.stream}}">
-        </video>
+        <p>Stream count: {{webrtc.getPeers.length}}</p>
+        <video autoplay ng-repeat="stream in webrtc.getPeers" ng-src="{{stream.blob}}"></video>
     </div>
 </div>

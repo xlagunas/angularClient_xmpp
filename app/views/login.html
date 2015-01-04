@@ -1,15 +1,8 @@
 <div class="container">
     <div class="jumbotron">
-      <!--<h1>'Allo, 'Allo!</h1>-->
-      <!--<p class="lead">-->
-        <!--<img src="images/yeoman.png" alt="I'm Yeoman"><br>-->
-        <!--Always a pleasure scaffolding your apps.-->
-      <!--</p>-->
-      <!--<p><a class="btn btn-lg btn-success" ng-href="#">Splendid!<span class="glyphicon glyphicon-ok"></span></a></p>-->
         <input ng-model="user.username" >
         <input ng-model="user.password" type="password">
         <button ng-click="loginClick(user.username, user.password)">Login</button>
-        <button ng-click="initRoster()">init</button>
 
     </div>
 
@@ -30,11 +23,6 @@
       <h4>Karma</h4>
       <p>Spectacular Test Runner for JavaScript.</p>
       <p>Login status aqui: {{xmppService.login.status}}</p>
-
-       <!--<video autoplay ng-repeat="stream in webrtc.getPeers">-->
-        <!--<source ng-src="{{stream.stream}}">-->
-       <!--</video>-->
-      <!--<p ng-repeat="stream in webrtc.getPeers">{{stream.user}} : {{stream.stream}}</p>-->
 
     </div>
 </div>

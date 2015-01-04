@@ -4,7 +4,8 @@
 angular.module('xmppTestApp')
   .service('xmpp', function ($rootScope, _, $log) {
 
-        var connection = new Strophe.Connection("http://xmpp.local/http-bind");
+//        var connection = new Strophe.Connection("http://xmpp.local/http-bind");
+        var connection = new Strophe.Connection("http://xmpp.xlagunas.cat");
 
         var users = [];
         var loginState = {};
@@ -29,17 +30,17 @@ angular.module('xmppTestApp')
 
                     if (unavailableNode !== null && unavailableNode === "unavailable"){
                         u.status = "disconnected";
-                        return;
+                        return true;
                     }
 
                     var showNode = presence.getElementsByTagName("show");
                     if (showNode.item(0) !== null) {
                         console.log(showNode[0].textContent);
                         u.status = showNode[0].textContent;
-                        return;
+                        return true;
                     } else {
                         u.status = "available";
-                        return;
+                        return true;
                     }
                 });
             }
@@ -53,27 +54,42 @@ angular.module('xmppTestApp')
                 $log.info(message);
 
                 var msg = JSON.parse(message.getElementsByTagName("body").item(0).textContent);
+                var sender = message.getAttribute("from");
+                var username = Strophe.getNodeFromJid(sender);
 
                 if (msg.type === "request"){
                     console.log("receive ring message");
                     ringing.status =  true;
-                    var username = Strophe.getNodeFromJid(message.getAttribute("from"));
                     var contact = _.find(users, function(user){
                         return user.username === username;
                     });
                     ringing.from = contact;
                 }
-                else if (msg.type === "accept"){
-                    console.log("Accepted call");
+                else if (msg.type === "accepted"){
+                    ringing.resolution = 'accepted';
+                    $rootScope.$broadcast('resolution', {resolution: true});
                 }
-                else if (msg.type === "reject"){
+                else if (msg.type === "rejected"){
                     console.log("Rejected call");
+                    ringing.resolution = 'rejected';
                 }
                 else if (msg.type === "unaswered"){
                     console.log("didn't answer");
+                    ringing.resolution = 'unanswered';
                 }
-                return true;
+                else if (msg.type === "offer" || msg.type == "answer"){
+                    $rootScope.$broadcast(msg.type, {content: msg.content, from: username})
+
+                }
+                else if (msg.type == 'answer'){
+                    $rootScope.$broadcast('offer', {content: msg.content, from: username})
+                }
+                else if (msg.type == 'iceCandidate'){
+                    $rootScope.$broadcast('iceCandidate', {content: msg.content, from: username})
+                }
             });
+
+            return true;
         }
 
         function on_roster(iq) {
@@ -105,17 +121,15 @@ angular.module('xmppTestApp')
 
         return {
             auth: function(login, password) {
-                connection.connect(login +"@localhost", password, function (status) {
-
+                connection.connect(login +"@xlagunas.cat", password, function (status) {
                     if (status === Strophe.Status.CONNECTED) {
                         $rootScope.$apply(function() {
                             console.log("Connected");
                             loginState.status = "connected";
-                            console.log('login_updated');
-                            console.log(login);
                             connection.addHandler(on_message, null, "message", "chat");
                             connection.addHandler(on_presence, null, "presence");
                             connection.addHandler(on_roster_changed, "jabber:iq:roster", "iq", "set");
+
                         });
                     }
 
@@ -167,7 +181,8 @@ angular.module('xmppTestApp')
                     from: connection.jid,
                     type: "chat"
                 }).c("body").t(text);
-                connection.send(message);
+                $log.info(message.toString());
+                connection.send(message.tree());
             },
             ringing: ringing
         }
