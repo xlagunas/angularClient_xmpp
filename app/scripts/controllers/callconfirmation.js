@@ -17,7 +17,7 @@ angular.module('xmppTestApp')
 
     $scope.ok = function () {
         //TODO set audio to true
-        webrtc.initStream(true, false, function(){
+        webrtc.initStream(true, true, function(){
             $log.info("Stream is added and can be recovered");
             //If we are the callers, change layout and wait for answer from peer -disable ok button and set timeout callback'
             if ($scope.dial.role === "caller") {

@@ -14,6 +14,7 @@
     </div>
     <div class="col-md-9">
         <p>Stream count: {{webrtc.getPeers.length}}</p>
-        <video autoplay ng-repeat="stream in webrtc.getPeers" ng-src="{{stream.blob}}"></video>
+        <video autoplay ng-repeat-start="stream in webrtc.getPeers" ng-src="{{stream.blob}}" muted ng-if="$first"></video>
+	<video autoplay ng-repeat-end ng-if="!$first" ng-src="{{stream.blob}}"></video>
     </div>
 </div>
